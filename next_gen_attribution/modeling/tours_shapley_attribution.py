@@ -69,16 +69,18 @@ for touchpoint in touchpoints:
     shapley_values[touchpoint] += subset_value_dict[touchpoint]/n # add the term corresponding to the empty set
 
 # take the the absolute values of the shapley values
-rescaled_shapley_values = {k: abs(v) for k, v in shapley_values.items()}
+rescaled_shapley_values = {k: abs(v)/max(shapley_values.values()) for k, v in shapley_values.items()}
+print(f"The sum of absolute shapley values is {sum(rescaled_shapley_values.values())}, i.e., ")
 fig, ax = plt.subplots(figsize=(3.5,3))
 ax.bar(*zip(*rescaled_shapley_values.items()))
-ax.set_xticklabels(["\n"*(i%4) + l for i,l in enumerate(touchpoints)])
-ax.tick_params(axis='both', which='major', labelsize=12)
+ax.set_xticklabels(["\n"*(i%6) + l for i,l in enumerate(touchpoints)])
+ax.tick_params(axis='both', which='major', labelsize=14)
 plt.show()
 
-# take the the absolute values of the shapley values
-no_email_shapley_values = 
+# variant where we plot everything except for email
+no_email_shapley_values = {k:abs(v) for k,v in shapley_values.items() if k!="utm_source_email"}
 fig, ax = plt.subplots(figsize=(3.5,3))
 ax.bar(*zip(*no_email_shapley_values.items()))
-ax.set_xticklabels(["\n"*(i%4) + l for i,l in enumerate(touchpoints)])
+ax.set_xticklabels(["\n"*(i%6) + l for i,l in enumerate(touchpoints)])
+ax.tick_params(axis='both', which='major', labelsize=14)
 plt.show()
