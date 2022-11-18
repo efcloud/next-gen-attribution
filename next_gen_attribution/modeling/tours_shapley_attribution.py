@@ -1,4 +1,6 @@
 import itertools
+import math
+
 
 def power_set(input_list):
     '''
@@ -50,6 +52,7 @@ for subset in cpset:
 print(f"There are {sum(subset_value_dict.values())} out of 2^{len(touchpoints)} coalitions with non-zero value")
 
 # compute shapley values
+n = len(touchpoints)
 shapley_values = defaultdict(int)
 for touchpoint in touchpoints:
     for coalition in subset_value_dict.keys():
@@ -58,7 +61,7 @@ for touchpoint in touchpoints:
             coalition_with_touchpoint = coalition.split(",")
             coalition_with_touchpoint.append(touchpoint)            
             coalition_with_touchpoint=",".join(sorted(coalition_with_touchpoint))
-            weight = (factorial(cardinal_coalition)*factorial(n-cardinal_coalition-1)/factorial(n)) # weight = |S|!(n-|S|-1)!/n!
-            contrib = (v_values[coalition_with_touchpoint]-v_values[coalition]) # marginal contribution = v(S U {i})-v(S)
+            weight = (math.factorial(cardinal_coalition)*math.factorial(n-cardinal_coalition-1)/math.factorial(n)) # weight = |S|!(n-|S|-1)!/n!
+            contrib = (subset_value_dict[coalition_with_touchpoint]-subset_value_dict[coalition]) # marginal contribution = v(S U {i})-v(S)
             shapley_values[touchpoint] += weight * contrib
-    shapley_values[touchpoint] += v_values[touchpoint]/n # add the term corresponding to the empty set
+    shapley_values[touchpoint] += subset_value_dict[touchpoint]/n # add the term corresponding to the empty set
