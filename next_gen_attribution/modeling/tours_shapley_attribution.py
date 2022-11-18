@@ -68,9 +68,17 @@ for touchpoint in touchpoints:
             shapley_values[touchpoint] += weight * contrib
     shapley_values[touchpoint] += subset_value_dict[touchpoint]/n # add the term corresponding to the empty set
 
-# take the log of the absolute values
-rescaled_shapley_values = {k: math.log(abs(100000*v)) for k, v in shapley_values.items()}
+# take the the absolute values of the shapley values
+rescaled_shapley_values = {k: abs(v) for k, v in shapley_values.items()}
 fig, ax = plt.subplots(figsize=(3.5,3))
 ax.bar(*zip(*rescaled_shapley_values.items()))
+ax.set_xticklabels(["\n"*(i%4) + l for i,l in enumerate(touchpoints)])
+ax.tick_params(axis='both', which='major', labelsize=12)
+plt.show()
+
+# take the the absolute values of the shapley values
+no_email_shapley_values = 
+fig, ax = plt.subplots(figsize=(3.5,3))
+ax.bar(*zip(*no_email_shapley_values.items()))
 ax.set_xticklabels(["\n"*(i%4) + l for i,l in enumerate(touchpoints)])
 plt.show()
