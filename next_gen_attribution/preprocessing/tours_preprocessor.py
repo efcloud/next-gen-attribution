@@ -13,5 +13,5 @@ non_journey_columns = ["user_id", "_uid", "is_converted"]
 utm_source_columns = list(data.filter(regex="utm_source_"))
 utm_campaign_columns = list(data.filter(regex="utm_campaign_"))
 non_journey_columns.extend(utm_campaign_columns)
-data["jvector"] = data.drop(columns=non_journey_columns).apply(list, axis=1)
+data["jvector"] = data.drop(columns=non_journey_columns).apply(tuple, axis=1)
 print(f"There are {len(data['jvector'].value_counts())} unique user journeys in this dataset")
