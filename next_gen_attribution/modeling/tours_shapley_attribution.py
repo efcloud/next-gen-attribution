@@ -1,6 +1,8 @@
 import itertools
 import math
 
+import matplotlib.pyplot as plt
+
 
 def power_set(input_list):
     '''
@@ -57,11 +59,18 @@ shapley_values = defaultdict(int)
 for touchpoint in touchpoints:
     for coalition in subset_value_dict.keys():
         if touchpoint not in coalition.split(","):
-            cardinal_coalition=len(coalition.split(","))
+            coalition_cardinality = len(coalition.split(","))
             coalition_with_touchpoint = coalition.split(",")
             coalition_with_touchpoint.append(touchpoint)            
-            coalition_with_touchpoint=",".join(sorted(coalition_with_touchpoint))
-            weight = (math.factorial(cardinal_coalition)*math.factorial(n-cardinal_coalition-1)/math.factorial(n)) # weight = |S|!(n-|S|-1)!/n!
+            coalition_with_touchpoint = ",".join(sorted(coalition_with_touchpoint))
+            weight = (math.factorial(coalition_cardinality)*math.factorial(n-coalition_cardinality-1)/math.factorial(n)) # weight = |S|!(n-|S|-1)!/n!
             contrib = (subset_value_dict[coalition_with_touchpoint]-subset_value_dict[coalition]) # marginal contribution = v(S U {i})-v(S)
             shapley_values[touchpoint] += weight * contrib
     shapley_values[touchpoint] += subset_value_dict[touchpoint]/n # add the term corresponding to the empty set
+
+# take the log of the absolute values
+rescaled_shapley_values = {k: math.log(abs(100000*v)) for k, v in shapley_values.items()}
+fig, ax = plt.subplots(figsize=(3.5,3))
+ax.bar(*zip(*rescaled_shapley_values.items()))
+ax.set_xticklabels(["\n"*(i%4) + l for i,l in enumerate(touchpoints)])
+plt.show()
