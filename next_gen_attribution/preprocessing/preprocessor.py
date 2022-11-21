@@ -20,8 +20,6 @@ class Preprocessor(ABC):
         data_source: str,
         spark_date: str,
         data_tag: str,
-        target: str,
-        split_by: str,
     ) -> None:
         self._business_unit = business_unit
         self._workflow_mode = workflow_mode
@@ -30,17 +28,8 @@ class Preprocessor(ABC):
         self._spark_date = spark_date
         # data tag to store train/val/test/scoring processed splits under
         self._data_tag = data_tag
-        self._target = target
-        self._split_by = split_by
         self._logger = logger.init(f"{business_unit}_preprocessor")
         self._output_fpath =  os.path.join(well_known_paths["PREPROCESSED_DATA_DIR"], f"{self._spark_date}/{self._data_tag}/preprocessed.csv")
-
-    @abstractmethod
-    def etl(self) -> None:
-        """
-        implements BU-specific ETL to generate preprocessed data used in subsequent modeling
-        :returns: None (the preprocessed data output are saved in csv format)
-        """
 
     def _get_data(self):
         lytics_data_fpath = os.path.join(
@@ -70,3 +59,11 @@ class Preprocessor(ABC):
             f"Saving preprocessed data to {self._workflow_mode}/{self._s3_data_dir}/{self._data_tag}..."
         )
         preprocessed_data.to_csv(self._output_fpath, index=False)
+
+    @abstractmethod
+    def etl(self) -> None:
+        """
+        implements BU-specific ETL to generate preprocessed data used in subsequent modeling
+        :returns: None (the preprocessed data output are saved in csv format)
+        """
+
