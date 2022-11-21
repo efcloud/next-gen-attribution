@@ -25,9 +25,7 @@ setup(
         "pre-commit==2.20.0",
     ],
     extras_require={
-        "mac": [
-        ],
-        "linux": [
-        ],
+        "mac": [],
+        "linux": [],
     },
 )

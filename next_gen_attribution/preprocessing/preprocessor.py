@@ -1,9 +1,7 @@
 import os
 from abc import ABC, abstractmethod
 
-import numpy as np
 import pandas as pd
-import yaml
 
 from next_gen_attribution.utility import logger, well_known_paths
 
@@ -29,8 +27,10 @@ class Preprocessor(ABC):
         # data tag to store train/val/test/scoring processed splits under
         self._data_tag = data_tag
         self._logger = logger.init(f"{business_unit}_preprocessor")
-        self._output_dir =  os.path.join(well_known_paths["PREPROCESSED_DATA_DIR"], self._spark_date, self._data_tag)
-        self._output_fpath =  os.path.join(self._output_dir, "preprocessed.csv")
+        self._output_dir = os.path.join(
+            well_known_paths["PREPROCESSED_DATA_DIR"], self._spark_date, self._data_tag
+        )
+        self._output_fpath = os.path.join(self._output_dir, "preprocessed.csv")
         if not os.path.exists(self._output_dir):
             os.makedirs(self._output_dir)
 
@@ -52,15 +52,11 @@ class Preprocessor(ABC):
         conversion_data = pd.read_csv(conversion_data_fpath, low_memory=False)
         return lytics_data, id_data, conversion_data
 
-    def _save_to_local(
-        self, preprocessed_data: pd.DataFrame
-    ):
+    def _save_to_local(self, preprocessed_data: pd.DataFrame):
         """
         saves preprocessed data to local
         """
-        log.info(
-            f"Saving preprocessed data to {self._output_fpath}..."
-        )
+        log.info(f"Saving preprocessed data to {self._output_fpath}...")
         preprocessed_data.to_csv(self._output_fpath, index=False)
 
     @abstractmethod
@@ -69,4 +65,3 @@ class Preprocessor(ABC):
         implements BU-specific ETL to generate preprocessed data used in subsequent modeling
         :returns: None (the preprocessed data output are saved in csv format)
         """
-
