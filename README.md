@@ -46,7 +46,7 @@ pytest
 
 First create an `datasets/20221116/` directory and copy "conversion.csv" "lytics_cleaned.csv", "lytics_web_data_last_5_expanded.csv" to that location.
 
-Then to invoke the following two commands from the terminal:
+Then make the following local invocations from the terminal:
 ```
 python workflows/attribution/data/preprocessing.py --businessUnit=tours --workflowMode=dev
 

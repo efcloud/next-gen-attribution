@@ -124,7 +124,9 @@ class Shapley_Attribution(Attribution):
         )
         ax.tick_params(axis="both", which="major", labelsize=14)
         print(f"Saving plot of rescaled Shapley values...")
-        fig_fpath = os.path.join(self._model_output_dir, "rescaled_shapley_values.png")
+        fig_fpath = os.path.join(
+            self._model_output_dir, self._model_version, "rescaled_shapley_values.png"
+        )
         plt.savefig(fig_fpath)
         plt.show()
         plt.clf()
