@@ -3,6 +3,8 @@ import math
 
 import matplotlib.pyplot as plt
 
+from collections import defaultdict
+
 
 def power_set(input_list):
     '''
@@ -70,7 +72,7 @@ for touchpoint in touchpoints:
 
 # take the the absolute values of the shapley values
 rescaled_shapley_values = {k: abs(v)/max(shapley_values.values()) for k, v in shapley_values.items()}
-print(f"The sum of absolute shapley values is {sum(rescaled_shapley_values.values())}, i.e., ")
+print(f"The sum of absolute shapley values is {sum(rescaled_shapley_values.values())}")
 fig, ax = plt.subplots(figsize=(3.5,3))
 ax.bar(*zip(*rescaled_shapley_values.items()))
 ax.set_xticklabels(["\n"*(i%6) + l for i,l in enumerate(touchpoints)])
@@ -81,6 +83,14 @@ plt.show()
 no_email_shapley_values = {k:abs(v) for k,v in shapley_values.items() if k!="utm_source_email"}
 fig, ax = plt.subplots(figsize=(3.5,3))
 ax.bar(*zip(*no_email_shapley_values.items()))
+ax.set_xticklabels(["\n"*(i%6) + l for i,l in enumerate(touchpoints)])
+ax.tick_params(axis='both', which='major', labelsize=14)
+plt.show()
+
+# shapley values
+print(f"The sum of shapley values is {sum(shapley_values.values())}")
+fig, ax = plt.subplots(figsize=(3.5,3))
+ax.bar(*zip(*shapley_values.items()))
 ax.set_xticklabels(["\n"*(i%6) + l for i,l in enumerate(touchpoints)])
 ax.tick_params(axis='both', which='major', labelsize=14)
 plt.show()
