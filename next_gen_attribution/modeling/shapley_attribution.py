@@ -110,6 +110,7 @@ class Shapley_Attribution(Attribution):
             shapley_values[touchpoint] += (
                 subset_value_dict[touchpoint] / n
             )  # add the term corresponding to the empty set
+        return shapley_values
 
     def _plot_rescaled_shapley_values(self, shapley_values: dict) -> None:
         rescaled_shapley_values = {
