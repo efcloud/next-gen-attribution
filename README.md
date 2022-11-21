@@ -44,4 +44,6 @@ pytest
 
 ```
 python workflows/attribution/data/preprocessing.py --businessUnit=tours --workflowMode=dev
+
+python workflows/attribution/model/train.py --modelType=shapley --workflowMode=dev
 ```

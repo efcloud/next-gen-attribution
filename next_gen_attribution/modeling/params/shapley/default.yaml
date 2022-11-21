@@ -1,0 +1,10 @@
+### model version ###
+experiment_name: "Shapley"
+run_name: 'shapley_attribution'
+model_output_dir: "tmp/shapley"
+data_output_dir : "tmp"
+spark_date: "20221116"
+data_tag: "generated_20221121"
+
+### model parameters ###
+#(TODO)

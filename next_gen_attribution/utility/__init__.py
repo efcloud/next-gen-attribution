@@ -26,11 +26,8 @@ well_known_paths = {
     "HADOOP_SECRETS_DIR": "/tmp/secrets/",
     "DATASETS_DIR": os.path.join(_ROOT, "datasets/"),
     "PREPROCESSED_DATA_DIR": os.path.join(_ROOT, "preprocessed_data/"),
+    "MODEL_OUTPUT_DIR": os.path.join(_ROOT, "model_output/"),
     "PARAMS_DIR": os.path.join(_ROOT, "next_gen_attribution/modeling/params/"),
-    "MLFLOW_MODEL_CONFIG": os.path.join(
-        os.path.join(os.path.join(_ROOT, "next_gen_attribution"), "attribution"),
-        "mlflow_configs",
-    ),
 }
 
 

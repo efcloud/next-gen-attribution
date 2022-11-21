@@ -29,7 +29,7 @@ class Preprocessor(ABC):
         # data tag to store train/val/test/scoring processed splits under
         self._data_tag = data_tag
         self._logger = logger.init(f"{business_unit}_preprocessor")
-        self._output_dir =  os.path.join(well_known_paths["PREPROCESSED_DATA_DIR"], f"{self._spark_date}", f"{self._data_tag}")
+        self._output_dir =  os.path.join(well_known_paths["PREPROCESSED_DATA_DIR"], self._spark_date, self._data_tag)
         self._output_fpath =  os.path.join(self._output_dir, "preprocessed.csv")
         if not os.path.exists(self._output_dir):
             os.makedirs(self._output_dir)
