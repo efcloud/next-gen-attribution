@@ -29,7 +29,10 @@ class Preprocessor(ABC):
         # data tag to store train/val/test/scoring processed splits under
         self._data_tag = data_tag
         self._logger = logger.init(f"{business_unit}_preprocessor")
-        self._output_fpath =  os.path.join(well_known_paths["PREPROCESSED_DATA_DIR"], f"{self._spark_date}/{self._data_tag}/preprocessed.csv")
+        self._output_dir =  os.path.join(well_known_paths["PREPROCESSED_DATA_DIR"], f"{self._spark_date}", f"{self._data_tag}")
+        self._output_fpath =  os.path.join(self._output_dir, "preprocessed.csv")
+        if not os.path.exists(self._output_dir):
+            os.makedirs(self._output_dir)
 
     def _get_data(self):
         lytics_data_fpath = os.path.join(
@@ -40,7 +43,7 @@ class Preprocessor(ABC):
             well_known_paths["DATASETS_DIR"],
             f"{self._spark_date}/lytics_cleaned.csv",
         )
-        conversion_data_path = os.path.join(
+        conversion_data_fpath = os.path.join(
             well_known_paths["DATASETS_DIR"],
             f"{self._spark_date}/conversion.csv",
         )
@@ -56,7 +59,7 @@ class Preprocessor(ABC):
         saves preprocessed data to local
         """
         log.info(
-            f"Saving preprocessed data to {self._workflow_mode}/{self._s3_data_dir}/{self._data_tag}..."
+            f"Saving preprocessed data to {self._output_fpath}..."
         )
         preprocessed_data.to_csv(self._output_fpath, index=False)
 

@@ -43,5 +43,5 @@ pytest
 ## Quick Start
 
 ```
-python workflows/attribution/data/preprocessing.py --dataSource=local
+python workflows/attribution/data/preprocessing.py --businessUnit=tours --workflowMode=dev
 ```

@@ -1,8 +1,12 @@
-import os
 import pandas as pd
 
-from next_gen_attribution.utility import logger, well_known_paths
 from typing import Tuple
+from datetime import date
+
+from next_gen_attribution.preprocessing.preprocessor import Preprocessor
+from next_gen_attribution.utility import logger, well_known_paths
+
+curr_date = date.today().strftime("%Y%m%d")
 
 
 class ToursPreprocessor(Preprocessor):
@@ -20,7 +24,7 @@ class ToursPreprocessor(Preprocessor):
         )
         self._curr_date = curr_date
 
-    def _pick_touchpoints(data: pd.DataFrame) -> None:
+    def _pick_touchpoints(self, data: pd.DataFrame) -> None:
         self._non_touchpoints = ["_uid", "is_converted"]
         utm_source_columns = list(data.filter(regex="utm_source_"))
         utm_campaign_columns = list(data.filter(regex="utm_campaign_"))
@@ -50,10 +54,10 @@ class ToursPreprocessor(Preprocessor):
         return categorical_columns
 
     def _generate_touchpoint_indicator_columns(self, data: pd.DataFrame) -> pd.DataFrame:
-        categorical_columns = _column_split(data, non_categorical_columns=["_uid"])
+        categorical_columns = self._column_split(data, non_categorical_columns=["_uid"])
         data = pd.get_dummies(data, columns=categorical_columns)
         data = data.groupby(level=0, axis=1).sum()
-        categorical_columns = _column_split(data, non_categorical_columns=["_uid"])
+        categorical_columns = self._column_split(data, non_categorical_columns=["_uid"])
         # HB (Alex, what did the hardcoded 15 here correspond to again? Was it the 3 different {ea,et,legacy} multiplied by the 5 touchpoints each?)
         data[categorical_columns] /= 15
         data[categorical_columns] = data[categorical_columns].astype(int)
@@ -63,14 +67,14 @@ class ToursPreprocessor(Preprocessor):
         # build map between _uid and individual_id of the form (_uid, individual_id)
         id_data["individual_id"] = id_data["individual_id"].fillna(0).astype(int)
         # build map between conversions and individual_id of the form (individual_id, single_conversion_event)
-        Conversion_data = conversion_data.rename(columns={"Individual_id":"individual_id"})
-        Conversion_data = conversion_data.groupby("individual_id", as_index=False).agg({"SourceCode": "first"})
+        conversion_data = conversion_data.rename(columns={"Individual_id":"individual_id"})
+        conversion_data = conversion_data.groupby("individual_id", as_index=False).agg({"SourceCode": "first"})
         # build converted individuals of the form (_uid, is_converted) from an inner join
         converted_individuals = pd.merge(id_data, conversion_data, on="individual_id", how="inner")
         converted_individuals["is_converted"] = 1
         return converted_individuals[["_uid", "is_converted"]]
 
-    def _merge_in_converted_individual_ids(self, data: pd.DataFrame, converted_individuals: pd.DataFrame): -> pd.DataFrame:
+    def _merge_in_converted_individual_ids(self, data: pd.DataFrame, converted_individuals: pd.DataFrame) -> pd.DataFrame:
         data = pd.merge(data, converted_individuals, on="_uid", how="left")
         data["is_converted"] = data["is_converted"].fillna(0).astype(int)
         return data
@@ -89,6 +93,7 @@ class ToursPreprocessor(Preprocessor):
     
     def _build_journey_vector(self, data: pd.DataFrame) -> pd.DataFrame:
         data["jvector"] = data.drop(columns=self._non_touchpoints).apply(tuple, axis=1)
+        return data
 
     def etl(self) -> None:
         """
@@ -96,9 +101,6 @@ class ToursPreprocessor(Preprocessor):
         """
         self._logger.info(f"Getting lytics, id, and conversion data")
         lytics_data, id_data, conversion_data = self._get_data()
-
-        self._logger.info(f"Picking touchpoints from lytics data")
-        self._pick_touchpoints(lytics_data)
 
         self._logger.info(f"Picking columns from lytics data")
         data = self._pick_columns(lytics_data)
@@ -113,10 +115,13 @@ class ToursPreprocessor(Preprocessor):
         converted_individuals = self._extract_converted_individual_ids(id_data, conversion_data)
 
         self._logger.info("Merging in converted individuals to the data")
-        data = self._merge_in_converted_individual_ids(data)
+        data = self._merge_in_converted_individual_ids(data, converted_individuals)
 
         self._logger.info("Running Vivek's email-adobe fix")
         data = self._email_adobe_fix(data)
+
+        self._logger.info(f"Picking touchpoints from data")
+        self._pick_touchpoints(data)
 
         self._logger.info("Disregarding repeated occurences of the same touchpoint")
         data = self._remove_touchpoint_repetition(data)
@@ -125,4 +130,4 @@ class ToursPreprocessor(Preprocessor):
         data = self._build_journey_vector(data)
         self._logger.info(f"There are {len(data['jvector'].value_counts())} unique user journeys in this dataset")
 
-        self._save_to_local(preprocessed_data)
+        self._save_to_local(data)

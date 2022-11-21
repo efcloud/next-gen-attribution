@@ -44,8 +44,6 @@ class PreprocessorFactory:
             self._data_source,
             self._spark_date,
             self._data_tag,
-            self._target,
-            self._split_by,
         )
 
     def etl(self, **kwargs) -> None:

@@ -25,7 +25,7 @@ def value_function(coalition, coalition_value_dict):
     return value_of_coalition
 
 
-# define column subsets (TODO: refactor)
+# define non-touchpoints and touchpoints (TODO: refactor)
 non_touchpoints = ["user_id", "_uid", "is_converted"]
 utm_source_columns = list(data.filter(regex="utm_source_"))
 utm_campaign_columns = list(data.filter(regex="utm_campaign_"))
