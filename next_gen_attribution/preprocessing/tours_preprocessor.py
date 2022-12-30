@@ -169,6 +169,7 @@ class ToursPreprocessor(Preprocessor):
         self._pick_touchpoints(data)
 
         self._logger.info("Disregarding repeated occurences of the same touchpoint")
+        # TODO: Should move into Attribution class to allow loops in graph
         data = self._remove_touchpoint_repetition(data)
 
         self._logger.info("Building user journey vectors")
